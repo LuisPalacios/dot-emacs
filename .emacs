@@ -1,10 +1,9 @@
 ;;
 ;; .emacs de LuisPa (updated 2021)
 ;;
-;; Here I just set my most used keybindings, for my own information
-;; It has nothing to do with this file ($HOME/.emacs), but I
-;; document it here
+;; Uso emacs eventualmente en mis equipos linux, vía SSH desde Mac.
 ;;
+;; A modo recordatorio: 
 ;; C-space        Activar 'Marcar Selección'
 ;; C-w            Cortar la selección
 ;; C-y            Pegar la selección cortada
@@ -15,6 +14,12 @@
 ;; C-Fin          Ir al final del documento (Mac: C-Fn-Fin)
 ;;
 
+;; Fichero .emacs que utilizo desde hace años...
+;;
+;; Crear un directorio .backups en $HOME
+
+;; En algunos entornos con X me salínan ventanas muy pequeñas, me aseguro
+;; que al menos tengan un frame de 24 líneas
 (if (< (frame-height) 4)
     (set-frame-height (window-frame) 24))
 
@@ -77,15 +82,11 @@
 ;; Nada de pitidos
 (setq ring-bell-function 'ignore)
 
-
-
 ;; Ya vale de mensajes al arrancar
 (setq inhibit-startup-message t)
 
 ;; Mostrar par ntesis
 (show-paren-mode t)
-
-
 
 ;; Paso de menus
 (menu-bar-mode nil)
