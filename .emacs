@@ -1,9 +1,10 @@
 ;;
-;; .emacs de LuisPa (updated 2021)
+;; .emacs de LuisPa (updated may'2021)
 ;;
-;; Uso emacs eventualmente en mis equipos linux, vía SSH desde Mac.
+;; Here I just set my most used keybindings, for my own information
+;; It has nothing to do with this file ($HOME/.emacs), but I
+;; document it here
 ;;
-;; A modo recordatorio: 
 ;; C-space        Activar 'Marcar Selección'
 ;; C-w            Cortar la selección
 ;; C-y            Pegar la selección cortada
@@ -13,18 +14,14 @@
 ;; C-Home         Ir al principio del documento (Mac: C-Fn-Home)
 ;; C-Fin          Ir al final del documento (Mac: C-Fn-Fin)
 ;;
-
-;; Fichero .emacs que utilizo desde hace años...
+;; Debug del .emacs: emacs --debug-init
 ;;
-;; Crear un directorio .backups en $HOME
-
-;; En algunos entornos con X me salínan ventanas muy pequeñas, me aseguro
-;; que al menos tengan un frame de 24 líneas
+;; Evito ventanas muy pequeñas (4 líneas de altura)
 (if (< (frame-height) 4)
     (set-frame-height (window-frame) 24))
 
 ;; Opcion genérica
-(setq frame-title-format "%b - GNU Emacs") ; Make the frame a bit more useful.
+(setq frame-title-format "%b - GNU Emacs")
 
 ;; Look and feel
 (set-foreground-color "gray")
@@ -56,28 +53,11 @@
       pop-up-windows nil                ; Assure my window-configuration is kept.
       require-final-newline t)          ; Fix rotten daimi-setup.
 
-;; Ignorar 'case' en b squedas
+;; Ignorar 'case' en búsquedas
 (setq case-fold-search t)
 
-;; LUIS AQUI
-;;(if window-system
-
-    ;; Place scroll-bar
-;;    (set-scroll-bar-mode 'right)
-
-    ;; hide toolbar
-;;    (tool-bar-mode nil)
-;;)
-;;--------------------------------------------
-;;(tool-bar-mode -1)                        ;;never have a retarded tool-bar at top
-;(menu-bar-mode -1)                        ;;never have a retarded menu-bar at top
-;(scroll-bar-mode -1)                      ;;never have a retarded scrill-bar at side
-;(setq-default indicate-empty-lines t)     ;;show (in left margin) marker for empty lines
-
-
+;;
 (setq scroll-step 1)
-
-
 
 ;; Nada de pitidos
 (setq ring-bell-function 'ignore)
@@ -85,55 +65,42 @@
 ;; Ya vale de mensajes al arrancar
 (setq inhibit-startup-message t)
 
-;; Mostrar par ntesis
+;; Mostrar paréntesis
 (show-paren-mode t)
 
-;; Paso de menus
+;; Paso de menús
 (menu-bar-mode nil)
 
-;; Reabrir los buffers antiguos
-;;(desktop-load-default)
-(desktop-read)
+;; Backups
+;; Put backup files neatly away
+(let ((backup-dir "~/.emacs-backups")
+      (auto-saves-dir "~/.emacs-auto-saves/"))
+  (dolist (dir (list backup-dir auto-saves-dir))
+    (when (not (file-directory-p dir))
+      (make-directory dir t)))
+  (setq backup-directory-alist `(("." . ,backup-dir))
+        auto-save-file-name-transforms `((".*" ,auto-saves-dir t))
+        auto-save-list-file-prefix (concat auto-saves-dir ".saves-")
+        tramp-backup-directory-alist `((".*" . ,backup-dir))
+        tramp-auto-save-directory auto-saves-dir))
+
+(setq backup-by-copying t    ; Don't delink hardlinks
+      delete-old-versions t  ; Clean up the backups
+      version-control t      ; Use version numbers on backups,
+      kept-new-versions 5    ; keep some new versions
+      kept-old-versions 2)   ; and some old ones, too
+
+;; Save point position between sessions
+(save-place-mode t)
+(setq save-place-file (locate-user-emacs-file "places" ".emacs-places"))
 
 ;; Auto comprimir..
 (auto-compression-mode t)
 
-;; Usar SHIFT y los cursores para marcar regiones
-(require 's-region)
-
-;; Go Spanish and Unicode
-;;(set-keyboard-coding-system 'iso-latin-1)
-;;(set-terminal-coding-system 'iso-latin-1)
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(set-locale-environment "es.UTF-8") ;; old
-(set-language-environment 'UTF-8) ;; eq
-(set-default-coding-systems 'utf-8) ;; eq
-(set-selection-coding-system 'utf-8) ;; old
-(setq default-buffer-file-coding-system 'utf-8)
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-(prefer-coding-system       'utf-8) ;; old
-(setq buffer-file-coding-system 'utf-8-unix)
-(setq default-file-name-coding-system 'utf-8-unix)
-(setq default-keyboard-coding-system 'utf-8-unix)
-(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
-(setq default-sendmail-coding-system 'utf-8-unix)
-(setq default-terminal-coding-system 'utf-8-unix)
-(setq utf-translate-cjk-mode nil) ; disable CJK coding/encoding - old
-
-
 ;; Recordar cosillas...
 (custom-set-variables
  '(global-font-lock-mode t nil (font-lock))
-;; '(save-place t nil (saveplace))
  '(transient-mark-mode t))
-
-;; Save point position between sessions 
-(save-place-mode t)
-(setq save-place-file (locate-user-emacs-file "places" ".emacs-places"))
-;;(setq save-place-forget-unreadable-files nil)
 
 ;; Colorines
 (custom-set-faces
@@ -142,8 +109,7 @@
  '(isearch ((t (:inherit region))))
  '(modeline ((t (:foreground "black" :background "steelblue"))))
  '(region ((t (:foreground "white" :background "midnight blue"))))
- '(show-paren-match-face ((t (:foreground "black"
-                                          :background "steel blue")))))
+ '(show-paren-match-face ((t (:foreground "black" :background "steel blue")))))
 
 ;; Teclas
 ;; Si usas o has usado windows estas teclas te ayudar n a no
@@ -183,33 +149,9 @@
   (global-set-key [(alt n)] 'make-frame)
 ))
 
-;; Backups
-;; Centralizar backups, en vez de tener todo el disco lleno
-;; de fichero que terminan con (~) por todas partes.
-(setq make-backup-files t)
-(setq auto-save-default nil)
-(setq delete-old-versions t)
-
-(defun make-backup-file-name (file)
-  "Create the non-numeric backup file name for FILE."
-  (require 'dired)
-  (let (path)
-    (cond ((eq system-type 'windows-nt)
-           (setq file (dired-replace-in-string ":" "" file))
-           (setq path "D:/backups/"))
-          (t
-	   ;; Directorio
-           (setq path "~/.backups/")
-	   (unless (file-exists-p path)
-	     (make-directory path t))
-	   ))
-    (concat path
-            (dired-replace-in-string "/" "~" file)
-            (format-time-string "~%Y%m%d%H%M%S~")
-            (car (last (split-string file "/"))))))
-
 ;; Desktop
 ;; Recuerda cosas...
+(desktop-save-mode 1)
 (when (fboundp 'desktop-load-default)
   (desktop-load-default)
   (mapcar
@@ -228,3 +170,24 @@
      (shell-command-history    . 50)))
   (desktop-read))
 
+;; Go Spanish and Unicode
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(setq default-buffer-file-coding-system 'utf-8))
+(set-language-environment 'utf-8)
+(setq locale-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(set-locale-environment "es.UTF-8") ;; old
+(set-selection-coding-system 'utf-8) ;; old
+(setq buffer-file-coding-system 'utf-8-unix)
+(setq default-file-name-coding-system 'utf-8-unix)
+(setq default-keyboard-coding-system 'utf-8-unix)
+(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+(setq default-sendmail-coding-system 'utf-8-unix)
+(setq default-terminal-coding-system 'utf-8-unix)
+(setq utf-translate-cjk-mode nil) ; disable CJK coding/encoding - old
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+
+;; EOF
